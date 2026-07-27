@@ -11,7 +11,7 @@ license: MIT
 metadata:
   author: seungboshim
   locale: ko
-  version: "2.4.0"
+  version: "2.5.0"
 ---
 
 <!-- tone-lint: off (지양 예문을 담고 있어 자기 검출 제외) -->
@@ -180,7 +180,8 @@ metadata:
 
 # 3부. 요소별 특화 교정
 
-작업 중인 문서가 아래에 해당하면 해당 참조 파일을 읽고 적용한다.
+먼저 작업 유형을 판별한다. 아래에 해당하면 **답을 쓰기 전에 참조 파일을 반드시 읽고**
+그 규칙까지 적용한다. 공통 규칙만 보고 체크리스트·선택지·연구노트를 고치지 않는다.
 
 - **체크리스트·백로그·요소 해체분석·기능 분해** → `references/checklists.md`
 - **설계 결정 기록·연구노트** → `references/research-note.md`
@@ -232,3 +233,11 @@ metadata:
 4. 한 예시에서만 나온 판단성 패턴은 규칙으로 굳히지 말고 "판단 필요"로 표시.
 5. 새 번역투 패턴이 기계로 잡히는 것(A급)이면 `references/translationese.md`에 더하고,
    `hooks/tone-linter.py`의 정규식에도 추가해 하드 검출을 같이 키운다.
+
+규칙을 바꾼 뒤에는 `evals/`도 함께 돌린다.
+
+- 트리거 회귀: `evals/*.md`의 긍정·부정 질의를 검사한다.
+- 교정 품질: 후보 출력을 JSONL로 모아 `python3 evals/evaluate_quality.py --outputs <파일>`로
+  좌표 보존·번역투 제거·과교정을 먼저 거른다.
+- 자연스러움은 기계 점수로 확정하지 않는다. 같은 스크립트의 `--write-review`로 검수표를
+  만든 뒤 자연스러움·정확성·말투 일치·과교정을 사람이 매긴다.

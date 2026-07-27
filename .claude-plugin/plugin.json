@@ -1,0 +1,12 @@
+{
+  "name": "korean-tone",
+  "description": "클로드의 딱딱한 한국어를 자연스럽게 다듬는다. 번역투와 내부 작업 용어는 걷어내고, 코드 식별자는 그대로 지킨다.",
+  "version": "2.5.0",
+  "author": {
+    "name": "seungboshim",
+    "url": "https://github.com/seungboshim"
+  },
+  "homepage": "https://github.com/seungboshim/skills#-korean-tone--edit-the-voice-not-the-coordinates",
+  "repository": "https://github.com/seungboshim/skills",
+  "license": "MIT"
+}
