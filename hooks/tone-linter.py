@@ -51,7 +51,12 @@ WARN = [
     ("할 수 있다",     re.compile(r"할\s*수\s*있(?:다|습니다)"),        4, "될 것 같아 / 하면 돼 로 갈아"),
     ("메타 담화",      re.compile(r"다음과\s*같(?:다|습니다|은|이)|살펴보(?:겠|도록|자)|결론적으로|아시다시피|앞서\s*(?:설명|언급)"), 2, "대개 통째로 삭제"),
     ("이루어지다/요구되다", re.compile(r"이루어(?:진다|집니다|졌|지)|(?:이|가)\s*요구(?:된다|됩니다|되)"), 2, "→ 능동 동사로"),
+    ("문장 중간 대시", re.compile(r"\S\s—\s\S"), 2, "라벨 뒤면 콜론, 문장을 이으면 끊기"),
 ]
+
+# 표는 대시를 구분자로 쓰는 게 자연스러워 '문장 중간 대시' 검사에서 뺀다
+_DASH_RULE = "문장 중간 대시"
+_TABLE = re.compile(r"^\s*\|")
 
 _FENCE = re.compile(r"^\s*(?:```|~~~)")
 _INLINE_CODE = re.compile(r"`[^`]*`")
@@ -85,7 +90,10 @@ def scan(content: str):
             if len(errors) < MAX_ERRORS and rx.search(line):
                 snippet = re.sub(r"\s+", " ", line).strip()[:44]
                 errors.append((i, name, hint, snippet))
+        is_table = _TABLE.match(raw)
         for name, rx, _thr, _hint in WARN:
+            if is_table and name == _DASH_RULE:
+                continue
             n = len(rx.findall(line))
             if n:
                 warn_counts[name] = warn_counts.get(name, 0) + n
@@ -197,6 +205,12 @@ def _selftest():
         os.unlink(tmp)
     r = format_report(*scan("에 의해 호출된다."))
     assert r is not None
+
+    # 문장 중간 대시: 산문은 잡고 표는 넘어간다
+    r = format_report(*scan("앞 문장입니다 — 뒤 절입니다.\n라벨 — 설명입니다."))
+    assert r and _DASH_RULE in r, "산문 대시 미검출"
+    r = format_report(*scan("| **소프트** — 스킬 | 문장을 다듬어요 |\n| **하드** — 훅 | 흘린 걸 잡아요 |"))
+    assert r is None or _DASH_RULE not in r, "표의 대시를 잡음"
 
     # warn 임계값: 2회면 '의 경우'(thr 2) 걸리고 1회면 안 걸림
     r1 = format_report(*scan("서버의 경우 그렇다."))
