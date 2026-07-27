@@ -20,16 +20,14 @@
 
 ---
 
-## Edit the voice, not the coordinates
-
-> The Korean is technically correct. It still sounds translated.
+The Korean is technically correct. It still sounds translated.
 
 korean-tone strips that stiffness from plans, implementation notes, reviews, checklists,
-ADRs, and user-facing choices — **while leaving code and precision alone.**
+ADRs, and user-facing choices, while leaving code and precision alone.
 
-### What changes
+## ✍️ What changes
 
-**Jargon is interpreted, not deleted**
+### 1. Jargon is interpreted, not deleted
 
 ```diff
 - handler가 stub이었다.
@@ -40,7 +38,7 @@ ADRs, and user-facing choices — **while leaving code and precision alone.**
 
 The term stays; a sentence explaining it gets added.
 
-**Names you have to look up are left alone**
+### 2. Names you have to look up are left alone
 
 ```diff
 - client_id가 틀렸습니다.
@@ -53,7 +51,7 @@ The term stays; a sentence explaining it gets added.
 fields, commits) is a coordinate, not prose.** Translating it to "고객 식별자" would make it
 unfindable.
 
-**Claude's own working vocabulary is stripped from user-facing text**
+### 3. Claude's own working vocabulary is stripped
 
 ```diff
 - [충돌 A] OCR 품질 게이트를 어떻게 처리할까요?
@@ -74,7 +72,7 @@ unfindable.
 Terms like `수렴 제안`, `AC7`, and `이터레이션` are how Claude tracks its own work. Nothing is
 cut, though — the question above still asks exactly the same thing.
 
-**Sentences get broken, not joined with dashes**
+### 4. Sentences get broken, not joined with dashes
 
 Em dashes read fine in English. Carried into Korean they make sentences drag, so a label
 takes a colon and a joined clause becomes its own sentence.
@@ -91,14 +89,14 @@ takes a colon and a joined clause becomes its own sentence.
 
 Dashes used as separators in tables and lists are left alone.
 
-**Ordinary translationese goes too**
+### 5. Ordinary translationese goes too
 
 ```diff
 - 이 함수에 대해 리팩토링을 진행하겠습니다.   ("I will proceed with refactoring of this function")
 + 이 함수를 리팩토링할게요.                    ("I'll refactor this function")
 ```
 
-### It works in two layers
+## ⚙️ It works in two layers
 
 Most style guides stop at "write it this way" — when the model drifts, nothing catches it.
 korean-tone adds an enforcement layer on top.
@@ -115,7 +113,7 @@ URLs are excluded; `<!-- tone-lint: off -->` skips a file entirely.
 
 It never blocks a write — it just tells Claude what to fix next turn.
 
-### Per-document rules
+## 📑 Per-document rules
 
 The common rules apply to every Korean answer. Documents get extra rules by type:
 
@@ -126,7 +124,7 @@ The common rules apply to every Korean answer. Documents get extra rules by type
 | User-facing choices | [`references/choices.md`](references/choices.md) | Ask the decision only; describe outcomes, not mechanisms |
 | Full translationese catalog | [`references/translationese.md`](references/translationese.md) | Every pattern, with sources and auto-detect grade |
 
-## Install
+## 📦 Install
 
 ### As a plugin
 
@@ -148,9 +146,9 @@ Only the writing rules take effect — the hook is not registered, so run
 npx skills add fromshim/korean-tone
 ```
 
-## When it runs
+## ⏱️ When it runs
 
-### The skill — mostly on its own
+### The skill: mostly on its own
 
 Claude applies it when explaining plans, implementations, and reviews in Korean, or when
 writing Korean documents. You don't have to call it.
@@ -164,7 +162,7 @@ To invoke it explicitly, the name depends on how you installed it:
 
 Phrases like "어투 교정", "말투 자연스럽게", "번역투 고쳐" trigger it too.
 
-### The linter hook — only under these conditions
+### The linter hook: only under these conditions
 
 With the plugin install, the hook scans when **all** of these hold:
 
@@ -178,7 +176,7 @@ Excluded from scanning: code blocks, inline code, URLs, and link targets.
 
 Chat replies are never scanned — only text written to disk.
 
-## Evaluation
+## 🧪 Evaluation
 
 Rule changes are re-checked against the same cases each time.
 
@@ -191,12 +189,12 @@ python3 evals/evaluate_quality.py --outputs <file>   # automated pass
 python3 hooks/tone-linter.py --selftest              # linter self-check
 ```
 
-## Related
+## 🔗 Related
 
 - [shimmy-tone](https://github.com/seungboshim/skills) — a personal dev-blog writing voice
   that layers on top of korean-tone. Lives in the author's skills collection along with
   workflow skills (feature-flow, daily, worklog).
 
-## License
+## 📄 License
 
 MIT
