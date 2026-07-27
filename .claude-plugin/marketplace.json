@@ -1,8 +1,8 @@
 {
-  "name": "__ORG__",
+  "name": "fromshim",
   "owner": {
-    "name": "__ORG__",
-    "url": "https://github.com/__ORG__"
+    "name": "fromshim",
+    "url": "https://github.com/fromshim"
   },
   "description": "korean-tone — Claude Code가 쓰는 한국어를 자연스럽게 다듬는 스킬과 린터",
   "plugins": [

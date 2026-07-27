@@ -16,7 +16,7 @@
   One writing skill. One non-blocking linter. Zero renamed identifiers.
 </p>
 
-<p align="center"><code>/plugin install korean-tone@__ORG__</code></p>
+<p align="center"><code>/plugin install korean-tone@fromshim</code></p>
 
 ---
 
@@ -82,8 +82,8 @@ The common rules apply to every Korean answer. Documents get extra rules by type
 ## Install
 
 ```bash
-/plugin marketplace add __ORG__/korean-tone
-/plugin install korean-tone@__ORG__
+/plugin marketplace add fromshim/korean-tone
+/plugin install korean-tone@fromshim
 ```
 
 The `tone-linter` hook installs with it — no extra setup.
@@ -94,7 +94,7 @@ The `tone-linter` hook installs with it — no extra setup.
 **Via skills.sh (any agent):**
 
 ```bash
-npx skills add __ORG__/korean-tone
+npx skills add fromshim/korean-tone
 ```
 
 Works outside Claude Code, but the hook needs

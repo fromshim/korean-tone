@@ -16,7 +16,7 @@
   스킬은 문장을 다듬고, 린터는 놓친 번역투를 알려줍니다. 코드 식별자는 바꾸지 않습니다.
 </p>
 
-<p align="center"><code>/plugin install korean-tone@__ORG__</code></p>
+<p align="center"><code>/plugin install korean-tone@fromshim</code></p>
 
 ---
 
@@ -104,8 +104,8 @@ Claude Code와 오래 작업하다 보니, 틀린 한국어보다 맞지만 어�
 ## 설치
 
 ```bash
-/plugin marketplace add __ORG__/korean-tone
-/plugin install korean-tone@__ORG__
+/plugin marketplace add fromshim/korean-tone
+/plugin install korean-tone@fromshim
 ```
 
 `tone-linter` 훅도 함께 설치됩니다. 따로 설정할 것이 없습니다.
@@ -116,7 +116,7 @@ Claude Code와 오래 작업하다 보니, 틀린 한국어보다 맞지만 어�
 **skills.sh로 설치하기 (여러 에이전트에서 사용):**
 
 ```bash
-npx skills add __ORG__/korean-tone
+npx skills add fromshim/korean-tone
 ```
 
 Claude Code 밖에서도 쓸 수 있지만, 훅은 [따로 등록](hooks/README.md)해야 합니다.
