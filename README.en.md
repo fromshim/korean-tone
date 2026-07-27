@@ -74,6 +74,23 @@ unfindable.
 Terms like `수렴 제안`, `AC7`, and `이터레이션` are how Claude tracks its own work. Nothing is
 cut, though — the question above still asks exactly the same thing.
 
+**Sentences get broken, not joined with dashes**
+
+Em dashes read fine in English. Carried into Korean they make sentences drag, so a label
+takes a colon and a joined clause becomes its own sentence.
+
+```diff
+- **재시도 정책** — 3회까지 지수 백오프로 재시도하며, 그 뒤에는 DLQ로 보냅니다.
++ **재시도 정책**: 3회까지 지수 백오프로 재시도하고, 그 뒤에는 DLQ로 보냅니다.
+  ("Retry policy — up to 3 attempts…" → "Retry policy: up to 3 attempts…")
+
+- 마이그레이션은 두 단계입니다 — 먼저 컬럼을 추가하고, 배포 뒤에 백필합니다.
++ 마이그레이션은 두 단계입니다. 먼저 컬럼을 추가하고, 배포한 뒤에 백필합니다.
+  ("The migration is two steps — first add the column…" → two sentences)
+```
+
+Dashes used as separators in tables and lists are left alone.
+
 **Ordinary translationese goes too**
 
 ```diff
