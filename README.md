@@ -103,25 +103,25 @@ Claude Code와 오래 작업하다 보니, 틀린 한국어보다 맞지만 어�
 
 ## 설치
 
+### 플러그인으로 설치
+
+Claude Code에서만 동작합니다. 작성 규칙과 함께 `tone-linter` 훅이 등록되어, 한국어 `.md`를
+저장할 때마다 번역투를 자동으로 검사합니다. 추가 설정은 없습니다.
+
 ```bash
 /plugin marketplace add fromshim/korean-tone
 /plugin install korean-tone@fromshim
 ```
 
-`tone-linter` 훅도 함께 설치됩니다. 따로 설정할 것이 없습니다.
+### skills.sh로 설치
 
-<details>
-<summary>다른 설치 방법</summary>
-
-**skills.sh로 설치하기 (여러 에이전트에서 사용):**
+Claude Code 외에 Codex, Cursor, Antigravity, Amp, Gemini CLI 등 여러 에이전트에 설치됩니다.
+작성 규칙만 적용되고 훅은 등록되지 않으므로, 자동 검사를 쓰려면
+[`hooks/register-hook.py`](hooks/README.md)를 직접 실행합니다.
 
 ```bash
 npx skills add fromshim/korean-tone
 ```
-
-Claude Code 밖에서도 쓸 수 있지만, 훅은 [따로 등록](hooks/README.md)해야 합니다.
-
-</details>
 
 ## 평가
 

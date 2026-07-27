@@ -81,26 +81,25 @@ The common rules apply to every Korean answer. Documents get extra rules by type
 
 ## Install
 
+### As a plugin
+
+Claude Code only. The `tone-linter` hook is registered alongside the writing rules, so
+every Korean `.md` you save is scanned for translationese automatically. No extra setup.
+
 ```bash
 /plugin marketplace add fromshim/korean-tone
 /plugin install korean-tone@fromshim
 ```
 
-The `tone-linter` hook installs with it — no extra setup.
+### Via skills.sh
 
-<details>
-<summary>Other install methods</summary>
-
-**Via skills.sh (any agent):**
+Installs to Codex, Cursor, Antigravity, Amp, Gemini CLI, and others besides Claude Code.
+Only the writing rules take effect — the hook is not registered, so run
+[`hooks/register-hook.py`](hooks/README.md) yourself to turn on the automatic check.
 
 ```bash
 npx skills add fromshim/korean-tone
 ```
-
-Works outside Claude Code, but the hook needs
-[separate registration](hooks/README.md).
-
-</details>
 
 ## Evaluation
 
