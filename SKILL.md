@@ -215,7 +215,8 @@ metadata:
 - **체크리스트·백로그·요소 해체분석·기능 분해** → `references/checklists.md`
 - **설계 결정 기록·연구노트** → `references/research-note.md`
 - **선택지·질문 제시 (AskUserQuestion 등)** → `references/choices.md`
-- (기술 문서 / 패치노트 / 가이드: 사용자가 예시를 주면 여기에 추가)
+- **기술 문서·README·가이드 (문단 서술형)** → `references/tech-docs.md`
+- (패치노트: 사용자가 예시를 주면 여기에 추가)
 
 > 벨로그 같은 캐주얼·유머·전파용 글(밈·이모지·비유·어그로 제목)은 이 스킬 밖이다.
 > 그런 개인 저술 보이스는 **shimmy-tone** 스킬을 쓴다.
