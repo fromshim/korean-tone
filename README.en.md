@@ -56,6 +56,15 @@ unfindable.
 **Claude's own working vocabulary is stripped from user-facing text**
 
 ```diff
+- [충돌 A] OCR 품질 게이트를 어떻게 처리할까요?
++ AI가 손글씨를 잘 읽는지 언제 확인할까요?
+  ("How should we handle conflict A's OCR quality gate?" → "When should we check
+   whether the AI reads handwriting well?")
+
+- 온톨로지를 어떻게 고칠까요? (QA: auth_provider 누락 지적)
++ 데이터 구조를 정리할까요?
+  ("How should we fix the ontology?" → "Should we tidy up the data structures?")
+
 - 수렴 제안 2건(인젝션 한 줄 제약 + 디자인 육안 승인 기준)을 적용할까요?
 + 추가 지침은 한 줄로 제한하고, 디자인은 결과물을 직접 본 뒤 승인하도록 할까요?
   ("Apply the 2 convergence proposals?" → "Should extra instructions be capped at one
