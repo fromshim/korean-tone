@@ -29,26 +29,47 @@ ADRs, and user-facing choices — **while leaving code and precision alone.**
 
 ### What changes
 
-```diff
-- 이 함수에 대해 리팩토링을 진행하겠습니다.   ("I will proceed with refactoring of this function")
-+ 이 함수를 리팩토링할게.                      ("I'll refactor this function")
+**Jargon is interpreted, not deleted**
 
-- handler 가 stub 이었다.
-+ 웹훅을 받아놓고 저장을 안 했어. 껍데기만 있고 안이 비어 있던 거지.
-  (jargon isn't deleted — it's interpreted: "it took the webhook and never stored it")
+```diff
+- handler가 stub이었다.
++ handler는 웹훅만 받고 저장하지 않았어요. 함수의 뼈대만 있고 실제 처리가 빠져 있었어요.
+  ("the handler was a stub" → "the handler took the webhook and never stored it —
+   just the shell of a function, with the actual work missing")
 ```
 
-Identifiers survive. `client_id` stays `client_id` — **anything you can grep for in the
-repo (functions, files, fields, commits) is a coordinate, not prose.** Translating it to
-"고객 식별자" would make it unfindable.
+The term stays; a sentence explaining it gets added.
 
-Claude's own working vocabulary gets stripped from user-facing text:
+**Names you have to look up are left alone**
 
 ```diff
-- [충돌 A] OCR 품질 게이트를 어떻게 처리할까요?
-+ AI 가 손글씨를 잘 읽는지 언제 확인할까요?
-  ("How should we handle conflict A's OCR quality gate?" → "When should we check
-   whether the AI reads handwriting well?")
+- client_id가 틀렸습니다.
++ client_id가 잘못됐어요. 인스타 전용 앱 ID가 들어갈 자리에 메타 앱 ID를 썼어요.
+  ("client_id was wrong" → "client_id is wrong — a Meta app ID went where the
+   Instagram-specific one belongs")
+```
+
+`client_id` stays `client_id` — **anything you can grep for in the repo (functions, files,
+fields, commits) is a coordinate, not prose.** Translating it to "고객 식별자" would make it
+unfindable.
+
+**Claude's own working vocabulary is stripped from user-facing text**
+
+```diff
+- 수렴 제안 2건(인젝션 한 줄 제약 + 디자인 육안 승인 기준)을 적용할까요?
++ 추가 지침은 한 줄로 제한하고, 디자인은 결과물을 직접 본 뒤 승인하도록 할까요?
+  ("Apply the 2 convergence proposals?" → "Should extra instructions be capped at one
+   line, and design approved after looking at the result?")
+```
+
+Terms like `수렴 제안`, `AC7`, and `이터레이션` are how Claude tracks its own work. Nothing is
+cut, though — the question above still asks exactly the same thing.
+
+**Ordinary translationese goes too**
+
+```diff
+- 이 함수에 대해 리팩토링을 진행하겠습니다.   ("I will proceed with refactoring of this function")
++ 이 함수를 리팩토링할게요.                    ("I'll refactor this function")
 ```
 
 ### It works in two layers
