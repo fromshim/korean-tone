@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>korean-tone — 말투만 diff 합니다</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f172a;
+        --text: #f8fafc;
+        --border: #33435e;
+        --red: #ff7b8a;
+        --red-bg: rgba(239, 68, 68, 0.14);
+        --green: #6ee7a5;
+        --green-bg: rgba(34, 197, 94, 0.14);
+        --cyan: #67e8f9;
+        --duration: 6s;
+        --delay: 0s;
+        --play: running;
+        font-family: "SF Pro Display", Pretendard, "Apple SD Gothic Neo", Inter, sans-serif;
+      }
+
+      * { box-sizing: border-box; }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+        background: var(--bg);
+      }
+
+      body {
+        color: var(--text);
+      }
+
+      .canvas {
+        position: relative;
+        width: 960px;
+        height: 188px;
+        overflow: hidden;
+        padding: 4px;
+        background: var(--bg);
+      }
+
+      .editor {
+        position: relative;
+        height: 180px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        background: #0f192c;
+      }
+
+      .editor-bar {
+        display: flex;
+        height: 42px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px;
+        border-bottom: 1px solid rgba(71, 85, 105, 0.56);
+        background: rgba(23, 35, 59, 0.9);
+      }
+
+      .traffic { display: flex; gap: 7px; }
+      .traffic span { width: 8px; height: 8px; border-radius: 50%; background: #56647a; }
+      .file {
+        color: #aebbd0;
+        font: 500 12px/1 "SFMono-Regular", Menlo, Consolas, monospace;
+      }
+      .rule-count {
+        color: #94a3b8;
+        font: 500 11px/1 "SFMono-Regular", Menlo, Consolas, monospace;
+      }
+
+      .diff {
+        position: relative;
+        padding: 14px 0 12px;
+        font: 600 17px/1.42 "SFMono-Regular", "Apple SD Gothic Neo", Menlo, monospace;
+      }
+
+      .line {
+        position: relative;
+        display: grid;
+        min-height: 37px;
+        grid-template-columns: 52px 1fr auto;
+        align-items: center;
+        padding: 4px 17px 4px 0;
+        border-left: 3px solid transparent;
+        white-space: nowrap;
+      }
+
+      .line-no {
+        color: #94a3b8;
+        text-align: right;
+        padding-right: 16px;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .old {
+        color: var(--red);
+        border-left-color: rgba(255, 123, 138, 0.72);
+        background: var(--red-bg);
+        animation: old-line var(--duration) cubic-bezier(0.4, 0, 0.2, 1) infinite both;
+        animation-delay: var(--delay);
+        animation-play-state: var(--play);
+      }
+
+      .new {
+        position: absolute;
+        right: 0;
+        left: 0;
+        color: var(--green);
+        border-left-color: rgba(110, 231, 165, 0.85);
+        background: var(--green-bg);
+        opacity: 0;
+        animation: new-line var(--duration) cubic-bezier(0.16, 1, 0.3, 1) infinite both;
+        animation-delay: var(--delay);
+        animation-play-state: var(--play);
+      }
+
+      .row-1 { top: 14px; }
+      .row-2 { top: 51px; }
+
+      .tag {
+        padding: 4px 8px;
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        opacity: 0.72;
+        font: 700 10px/1 "SFMono-Regular", Menlo, Consolas, monospace;
+        letter-spacing: 0.02em;
+      }
+
+      .unchanged {
+        color: #d6deeb;
+        background: rgba(51, 65, 85, 0.18);
+      }
+
+      .unchanged code { color: #f8fafc; }
+
+      .kept {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        color: var(--cyan);
+        border-color: rgba(103, 232, 249, 0.46);
+        background: rgba(103, 232, 249, 0.08);
+        opacity: 0;
+        transform: translateX(8px);
+        animation: kept var(--duration) cubic-bezier(0.16, 1, 0.3, 1) infinite both;
+        animation-delay: var(--delay);
+        animation-play-state: var(--play);
+      }
+
+      .scan {
+        position: absolute;
+        z-index: 4;
+        top: 42px;
+        bottom: 0;
+        width: 150px;
+        pointer-events: none;
+        background: linear-gradient(90deg, transparent, rgba(103, 232, 249, 0.08), rgba(103, 232, 249, 0.28), transparent);
+        filter: blur(0.2px);
+        opacity: 0;
+        transform: translateX(-180px);
+        animation: scan var(--duration) cubic-bezier(0.65, 0, 0.35, 1) infinite both;
+        animation-delay: var(--delay);
+        animation-play-state: var(--play);
+      }
+
+      .scan::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 28px;
+        bottom: 0;
+        width: 1px;
+        background: rgba(103, 232, 249, 0.7);
+        box-shadow: 0 0 13px rgba(103, 232, 249, 0.7);
+      }
+
+      @keyframes old-line {
+        0%, 31% { opacity: 1; transform: translateX(0); filter: blur(0); }
+        38%, 87% { opacity: 0; transform: translateX(-18px); filter: blur(1px); }
+        94%, 100% { opacity: 1; transform: translateX(0); filter: blur(0); }
+      }
+
+      @keyframes new-line {
+        0%, 32% { opacity: 0; transform: translateY(9px); filter: blur(2px); }
+        43%, 87% { opacity: 1; transform: translateY(0); filter: blur(0); }
+        94%, 100% { opacity: 0; transform: translateY(-5px); filter: blur(1px); }
+      }
+
+      @keyframes scan {
+        0%, 10% { opacity: 0; transform: translateX(-180px); }
+        15% { opacity: 1; }
+        38% { opacity: 1; transform: translateX(900px); }
+        42%, 100% { opacity: 0; transform: translateX(900px); }
+      }
+
+      @keyframes kept {
+        0%, 38% { opacity: 0; transform: translateX(8px); }
+        47%, 87% { opacity: 1; transform: translateX(0); }
+        94%, 100% { opacity: 0; transform: translateX(4px); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .old, .scan { display: none; }
+        .new { opacity: 1; transform: none; animation: none; }
+        .kept { opacity: 1; transform: none; animation: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="canvas" role="img" aria-label="korean-tone이 온톨로지와 품질 게이트 같은 내부 작업 용어를 사용자 말로 바꾸고 client_id 같은 코드 좌표는 그대로 두는 diff 애니메이션">
+      <section class="editor" aria-hidden="true">
+        <div class="editor-bar">
+          <div class="traffic"><span></span><span></span><span></span></div>
+          <div class="file">assistant-response.ko.md</div>
+          <div class="rule-count">2 fixes · 1 kept</div>
+        </div>
+        <div class="scan"></div>
+        <div class="diff">
+          <div class="line old">
+            <span class="line-no">1</span>
+            <span>− [충돌 A] 온톨로지 싱글턴을 수렴 제안에 편입할까요?</span>
+            <span class="tag">내부 용어</span>
+          </div>
+          <div class="line new row-1">
+            <span class="line-no">1</span>
+            <span>+ 데이터 구조를 정리할까요?</span>
+            <span class="tag">결정만</span>
+          </div>
+
+          <div class="line old">
+            <span class="line-no">2</span>
+            <span>− QA 원안의 OCR 품질 게이트를 testable화할까요?</span>
+            <span class="tag">내부 용어</span>
+          </div>
+          <div class="line new row-2">
+            <span class="line-no">2</span>
+            <span>+ AI가 손글씨를 잘 읽는지 언제 확인할까요?</span>
+            <span class="tag">독자의 말</span>
+          </div>
+
+          <div class="line unchanged">
+            <span class="line-no">3</span>
+            <span>&nbsp; <code>client_id</code>가 틀렸어요.</span>
+            <span class="tag kept">좌표 유지</span>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const time = new URLSearchParams(location.search).get("t");
+      if (time !== null) {
+        document.documentElement.style.setProperty("--delay", `-${Number(time)}s`);
+        document.documentElement.style.setProperty("--play", "paused");
+      }
+    </script>
+  </body>
+</html>
