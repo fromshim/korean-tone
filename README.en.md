@@ -101,6 +101,36 @@ Only the writing rules take effect — the hook is not registered, so run
 npx skills add fromshim/korean-tone
 ```
 
+## When it runs
+
+### The skill — mostly on its own
+
+Claude applies it when explaining plans, implementations, and reviews in Korean, or when
+writing Korean documents. You don't have to call it.
+
+To invoke it explicitly, the name depends on how you installed it:
+
+| Install method | Invocation |
+|---|---|
+| Plugin | `/korean-tone:korean-tone` |
+| skills.sh | `/korean-tone` |
+
+Phrases like "어투 교정", "말투 자연스럽게", "번역투 고쳐" trigger it too.
+
+### The linter hook — only under these conditions
+
+With the plugin install, the hook scans when **all** of these hold:
+
+- Claude saved a file with `Write` or `Edit`
+- The extension is `.md`, `.mdx`, or `.markdown`
+- The saved text contains Hangul
+- The file has no `<!-- tone-lint: off -->` marker
+
+Excluded from scanning: code blocks, inline code, URLs, and link targets.
+`Edit` scans only the changed text, and line numbers are reported against the file.
+
+Chat replies are never scanned — only text written to disk.
+
 ## Evaluation
 
 Rule changes are re-checked against the same cases each time.

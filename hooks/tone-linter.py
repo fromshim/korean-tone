@@ -113,17 +113,47 @@ def format_report(errors, warn_counts):
     return "\n".join(out)
 
 
+def _line_offset(file_path, fragment):
+    """파일 안에서 fragment 가 시작하는 줄 번호 - 1. 못 찾으면 0."""
+    try:
+        with open(file_path, encoding="utf-8") as f:
+            whole = f.read()
+    except OSError:
+        return 0
+    i = whole.find(fragment)
+    return whole.count("\n", 0, i) if i != -1 else 0
+
+
+def _opted_out(file_path, content):
+    """off 마커 확인. Edit 는 바뀐 조각만 오므로 디스크의 파일 전체를 본다."""
+    if OFF_MARKER in content:
+        return True
+    try:
+        with open(file_path, encoding="utf-8") as f:
+            return OFF_MARKER in f.read()
+    except OSError:
+        return False
+
+
 def main():
     try:
         data = json.load(sys.stdin)
         tool_input = data.get("tool_input", {}) or {}
-        path = (tool_input.get("file_path") or "").lower()
-        if not path.endswith(MD_EXT):
+        raw_path = tool_input.get("file_path") or ""
+        if not raw_path.lower().endswith(MD_EXT):
             return
         content = tool_input.get("content") or tool_input.get("new_string") or ""
-        if not content or OFF_MARKER in content or not HANGUL.search(content):
+        if not content or not HANGUL.search(content):
             return
-        report = format_report(*scan(content))
+        if _opted_out(raw_path, content):
+            return
+        errors, warns = scan(content)
+        # Edit 는 조각만 오므로 줄 번호를 파일 기준으로 보정한다
+        if "content" not in tool_input and errors:
+            off = _line_offset(raw_path, content)
+            if off:
+                errors = [(n + off, a, b, c) for n, a, b, c in errors]
+        report = format_report(errors, warns)
         if report:
             json.dump({"hookSpecificOutput": {
                 "hookEventName": "PostToolUse",
@@ -153,10 +183,20 @@ def _selftest():
     errs, _ = scan("`에 의해` 는 인라인코드라 제외돼야 한다.")
     assert not errs, "인라인코드가 검사됨"
 
-    # off 마커
+    # off 마커: Edit 는 조각만 오므로 디스크의 파일 전체를 봐야 한다
+    import tempfile, os
+    fd, tmp = tempfile.mkstemp(suffix=".md")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        f.write(f"<!-- {OFF_MARKER} -->\n앞 줄\n이 함수는 스케줄러에 의해 호출된다.\n")
+    try:
+        frag = "이 함수는 스케줄러에 의해 호출된다."
+        assert _opted_out(tmp, frag), "Edit 조각에서 off 마커를 놓침"
+        assert not _opted_out(tmp.replace(".md", "-none.md"), "본문"), "없는 파일에 off 오판"
+        assert _line_offset(tmp, frag) == 2, f"줄 번호 보정 실패: {_line_offset(tmp, frag)}"
+    finally:
+        os.unlink(tmp)
     r = format_report(*scan("에 의해 호출된다."))
     assert r is not None
-    # main 경로의 off는 content 검사에서 처리 — 여기선 스캐너만 확인
 
     # warn 임계값: 2회면 '의 경우'(thr 2) 걸리고 1회면 안 걸림
     r1 = format_report(*scan("서버의 경우 그렇다."))
