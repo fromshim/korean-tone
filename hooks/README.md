@@ -11,7 +11,18 @@ korean-tone 스킬의 **하드 검출 층**. Claude Code의 `PostToolUse` 훅으
 - 코드블록·인라인코드·URL은 검사에서 제외
 - 파일에 `<!-- tone-lint: off -->` 가 있으면 그 파일은 건너뜀
 
-## 설치 (전역)
+## 설치
+
+### 플러그인으로 설치했다면 — 자동
+
+```bash
+/plugin marketplace add seungboshim/skills
+/plugin install korean-tone@seungboshim-skills
+```
+
+`hooks.json`이 함께 설치돼서 훅이 **자동으로 걸린다.** 아래 수동 등록은 필요 없다.
+
+### `npx skills`로 설치했거나 직접 쓸 때 — 수동 등록
 
 ```bash
 python3 skills/korean-tone/hooks/register-hook.py
