@@ -4,14 +4,14 @@
     "name": "fromshim",
     "url": "https://github.com/fromshim"
   },
-  "description": "korean-tone — Claude Code가 쓰는 한국어를 자연스럽게 다듬는 스킬과 린터",
+  "description": "korean-tone: 모든 한국어 답변에 적용되는 말투와 easy·mz 변형, 문서 린터",
   "plugins": [
     {
       "name": "korean-tone",
       "source": "./",
       "displayName": "Korean Tone",
-      "description": "클로드의 딱딱한 한국어를 자연스럽게 다듬는다. 번역투와 내부 작업 용어는 걷어내고, 코드 식별자는 그대로 지킨다. 저장되는 한국어 문서를 검사하는 tone-linter 훅이 함께 설치된다.",
-      "version": "2.6.0",
+      "description": "설치 직후부터 모든 한국어 답변을 자연스럽게 다듬는다. default·easy·mz 모드와 저장 문서를 검사하는 tone-linter 훅이 함께 설치된다.",
+      "version": "3.0.0",
       "author": {
         "name": "seungboshim",
         "url": "https://github.com/seungboshim"

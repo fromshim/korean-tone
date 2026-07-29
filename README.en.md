@@ -96,15 +96,15 @@ Dashes used as separators in tables and lists are left alone.
 + 이 함수를 리팩토링할게요.                    ("I'll refactor this function")
 ```
 
-## ⚙️ It works in two layers
+## ⚙️ It applies to every Korean reply after installation
 
-Most style guides stop at "write it this way" — when the model drifts, nothing catches it.
-korean-tone adds an enforcement layer on top.
+The plugin works in three layers:
 
 | Layer | What | How |
 |---|---|---|
-| **Soft** — the skill | Shapes the writing | Rules apply whenever Claude speaks Korean |
-| **Hard** — `tone-linter` hook | Catches the drift | Scans every Korean `.md` you save for translationese |
+| **Always-on tone hook** | Shapes every reply | Loads the rules at session start and reinforces the current mode on each prompt |
+| **Document skills** | Adds format-specific rules | Loads the right guidance for checklists, ADRs, choices, and technical docs |
+| **`tone-linter` hook** | Catches drift in files | Scans every Korean `.md` you save for translationese |
 
 Patterns are sourced from National Institute of Korean Language papers, Toss's technical
 writing guide, and 이오덕's *우리글 바로쓰기*. They're split into **error grade** (near-zero
@@ -128,8 +128,9 @@ The common rules apply to every Korean answer. Documents get extra rules by type
 
 ### As a plugin
 
-Claude Code only. The `tone-linter` hook is registered alongside the writing rules, so
-every Korean `.md` you save is scanned for translationese automatically. No extra setup.
+Claude Code only. Start a new session after installation and the default Korean Tone applies to
+every Korean reply. The document linter and `default`, `easy`, and `mz` modes are included. No
+extra setup.
 
 ```bash
 /plugin marketplace add fromshim/korean-tone
@@ -148,19 +149,24 @@ npx skills add fromshim/korean-tone
 
 ## ⏱️ When it runs
 
-### The skill: mostly on its own
+### Plugin: every reply from the start of the session
 
-Claude applies it when explaining plans, implementations, and reviews in Korean, or when
-writing Korean documents. You don't have to call it.
+The plugin loads the base rules when a session starts and adds a short mode reminder before each
+prompt. You only need a command when you want to switch styles:
 
-To invoke it explicitly, the name depends on how you installed it:
-
-| Install method | Invocation |
+| Command | Style |
 |---|---|
-| Plugin | `/korean-tone:korean-tone` |
-| skills.sh | `/korean-tone` |
+| `/korean-tone:default` | Natural, accurate Korean with the stiffness removed |
+| `/korean-tone:easy` | Easy enough for an elementary-school student to follow, without baby talk |
+| `/korean-tone:mz` | The same content as default, restyled like a Korean Instagram comment |
 
-Phrases like "어투 교정", "말투 자연스럽게", "번역투 고쳐" trigger it too.
+The selected mode persists through `/clear`, context compaction, and session resume. A new session
+starts in `default`. Use `/korean-tone:korean-tone` to invoke the deeper document-specific skill.
+
+### skills.sh: invoked for relevant Korean work
+
+With a skills.sh install, use `/korean-tone` or ask for natural Korean explicitly. The always-on
+hook and persistent modes are available only through the plugin install.
 
 ### The linter hook: only under these conditions
 
@@ -174,18 +180,19 @@ With the plugin install, the hook scans when **all** of these hold:
 Excluded from scanning: code blocks, inline code, URLs, and link targets.
 `Edit` scans only the changed text, and line numbers are reported against the file.
 
-Chat replies are never scanned — only text written to disk.
+The linter scans only text written to disk. The always-on tone hook handles chat replies.
 
 ## 🧪 Evaluation
 
 Rule changes are re-checked against the same cases each time.
 
 - **Trigger regression** — 10 queries in [`evals/`](evals) verify the skill fires when it should and stays quiet when it shouldn't.
-- **Correction quality** — 12 cases in [`evals/quality-cases.jsonl`](evals/quality-cases.jsonl), scored by [`evals/evaluate_quality.py`](evals/evaluate_quality.py) for coordinate preservation, translationese removal, and over-correction.
+- **Correction quality** — 13 cases in [`evals/quality-cases.jsonl`](evals/quality-cases.jsonl), scored by [`evals/evaluate_quality.py`](evals/evaluate_quality.py) for coordinate preservation, translationese removal, and over-correction.
 - **Human review** — naturalness, accuracy, register match, and over-correction are rated 1–5 by a person. The script's `--write-review` builds the sheet.
 
 ```bash
 python3 evals/evaluate_quality.py --outputs <file>   # automated pass
+python3 hooks/tone-context.py --selftest             # always-on and mode checks
 python3 hooks/tone-linter.py --selftest              # linter self-check
 ```
 
