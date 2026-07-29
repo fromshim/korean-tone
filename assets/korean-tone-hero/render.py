@@ -24,7 +24,7 @@ def find_command(candidates: list[str]) -> str:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--fps", type=int, default=8)
-    parser.add_argument("--duration", type=float, default=6.0)
+    parser.add_argument("--duration", type=float, default=9.0)
     parser.add_argument("--width", type=int, default=960)
     parser.add_argument("--height", type=int, default=188)
     parser.add_argument("--output", type=Path, default=HERE / "korean-tone.gif")

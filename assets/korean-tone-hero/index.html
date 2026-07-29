@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>korean-tone — 말투만 diff 합니다</title>
+    <title>korean-tone — 원본에서 default, 그리고 mz까지</title>
     <style>
       :root {
         color-scheme: dark;
@@ -14,8 +14,10 @@
         --red-bg: rgba(239, 68, 68, 0.14);
         --green: #6ee7a5;
         --green-bg: rgba(34, 197, 94, 0.14);
+        --mz: #f0abfc;
+        --mz-bg: rgba(240, 171, 252, 0.14);
         --cyan: #67e8f9;
-        --duration: 6s;
+        --duration: 9s;
         --delay: 0s;
         --play: running;
         font-family: "SF Pro Display", Pretendard, "Apple SD Gothic Neo", Inter, sans-serif;
@@ -70,19 +72,43 @@
         color: #aebbd0;
         font: 500 12px/1 "SFMono-Regular", Menlo, Consolas, monospace;
       }
-      .rule-count {
-        color: #94a3b8;
-        font: 500 11px/1 "SFMono-Regular", Menlo, Consolas, monospace;
+
+      .mode {
+        position: relative;
+        width: 104px;
+        height: 14px;
       }
+
+      /* 모드 이름은 라벨이라 겹쳐 읽히지 않게 즉시 전환한다 */
+      .mode span {
+        position: absolute;
+        top: 0;
+        right: 0;
+        white-space: nowrap;
+        font: 700 11px/1.25 "SFMono-Regular", Menlo, Consolas, monospace;
+        letter-spacing: 0.02em;
+        animation-duration: var(--duration);
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-fill-mode: both;
+        animation-delay: var(--delay);
+        animation-play-state: var(--play);
+      }
+
+      .m1 { color: #94a3b8; animation-name: cut-1; }
+      .m2 { color: var(--green); animation-name: cut-2; }
+      .m3 { color: var(--mz); animation-name: cut-3; }
 
       .diff {
         position: relative;
-        padding: 14px 0 12px;
+        height: 138px;
         font: 600 17px/1.42 "SFMono-Regular", "Apple SD Gothic Neo", Menlo, monospace;
       }
 
       .line {
-        position: relative;
+        position: absolute;
+        right: 0;
+        left: 0;
         display: grid;
         min-height: 37px;
         grid-template-columns: 52px 1fr auto;
@@ -90,7 +116,16 @@
         padding: 4px 17px 4px 0;
         border-left: 3px solid transparent;
         white-space: nowrap;
+        animation-duration: var(--duration);
+        animation-iteration-count: infinite;
+        animation-fill-mode: both;
+        animation-delay: var(--delay);
+        animation-play-state: var(--play);
       }
+
+      .row-1 { top: 14px; }
+      .row-2 { top: 51px; }
+      .row-3 { top: 88px; }
 
       .line-no {
         color: #94a3b8;
@@ -100,30 +135,49 @@
         font-weight: 500;
       }
 
-      .old {
+      /* 색은 단계가 아니라 줄의 역할을 나타낸다 */
+      .c-old {
         color: var(--red);
         border-left-color: rgba(255, 123, 138, 0.72);
         background: var(--red-bg);
-        animation: old-line var(--duration) cubic-bezier(0.4, 0, 0.2, 1) infinite both;
-        animation-delay: var(--delay);
-        animation-play-state: var(--play);
       }
 
-      .new {
-        position: absolute;
-        right: 0;
-        left: 0;
+      .c-new {
         color: var(--green);
         border-left-color: rgba(110, 231, 165, 0.85);
         background: var(--green-bg);
-        opacity: 0;
-        animation: new-line var(--duration) cubic-bezier(0.16, 1, 0.3, 1) infinite both;
-        animation-delay: var(--delay);
-        animation-play-state: var(--play);
       }
 
-      .row-1 { top: 14px; }
-      .row-2 { top: 51px; }
+      .c-mz {
+        color: var(--mz);
+        border-left-color: rgba(240, 171, 252, 0.85);
+        background: var(--mz-bg);
+      }
+
+      .c-keep {
+        color: #d6deeb;
+        border-left-color: rgba(103, 232, 249, 0.32);
+        background: rgba(51, 65, 85, 0.18);
+      }
+
+      .c-keep code,
+      .c-mz code { color: #f8fafc; }
+
+      /* 타이밍은 단계별로 하나씩. 나갈 때는 왼쪽, 들어올 때는 아래에서 위로 */
+      .p1 {
+        animation-name: stage-1;
+        animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .p2 {
+        animation-name: stage-2;
+        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .p3 {
+        animation-name: stage-3;
+        animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+      }
 
       .tag {
         padding: 4px 8px;
@@ -134,13 +188,6 @@
         letter-spacing: 0.02em;
       }
 
-      .unchanged {
-        color: #d6deeb;
-        background: rgba(51, 65, 85, 0.18);
-      }
-
-      .unchanged code { color: #f8fafc; }
-
       .kept {
         display: inline-flex;
         align-items: center;
@@ -148,11 +195,7 @@
         color: var(--cyan);
         border-color: rgba(103, 232, 249, 0.46);
         background: rgba(103, 232, 249, 0.08);
-        opacity: 0;
-        transform: translateX(8px);
-        animation: kept var(--duration) cubic-bezier(0.16, 1, 0.3, 1) infinite both;
-        animation-delay: var(--delay);
-        animation-play-state: var(--play);
+        opacity: 1;
       }
 
       .scan {
@@ -166,7 +209,10 @@
         filter: blur(0.2px);
         opacity: 0;
         transform: translateX(-180px);
-        animation: scan var(--duration) cubic-bezier(0.65, 0, 0.35, 1) infinite both;
+        animation-duration: var(--duration);
+        animation-timing-function: cubic-bezier(0.65, 0, 0.35, 1);
+        animation-iteration-count: infinite;
+        animation-fill-mode: both;
         animation-delay: var(--delay);
         animation-play-state: var(--play);
       }
@@ -182,73 +228,142 @@
         box-shadow: 0 0 13px rgba(103, 232, 249, 0.7);
       }
 
-      @keyframes old-line {
-        0%, 31% { opacity: 1; transform: translateX(0); filter: blur(0); }
-        38%, 87% { opacity: 0; transform: translateX(-18px); filter: blur(1px); }
-        94%, 100% { opacity: 1; transform: translateX(0); filter: blur(0); }
+      .scan-1 { animation-name: scan-1; }
+      .scan-2 {
+        animation-name: scan-2;
+        background: linear-gradient(90deg, transparent, rgba(240, 171, 252, 0.08), rgba(240, 171, 252, 0.3), transparent);
       }
 
-      @keyframes new-line {
-        0%, 32% { opacity: 0; transform: translateY(9px); filter: blur(2px); }
-        43%, 87% { opacity: 1; transform: translateY(0); filter: blur(0); }
-        94%, 100% { opacity: 0; transform: translateY(-5px); filter: blur(1px); }
+      .scan-2::after {
+        background: rgba(240, 171, 252, 0.72);
+        box-shadow: 0 0 13px rgba(240, 171, 252, 0.72);
       }
 
-      @keyframes scan {
-        0%, 10% { opacity: 0; transform: translateX(-180px); }
-        15% { opacity: 1; }
-        38% { opacity: 1; transform: translateX(900px); }
-        42%, 100% { opacity: 0; transform: translateX(900px); }
+      /* 나가는 줄과 들어오는 줄의 구간을 겹쳐 빈 프레임이 생기지 않게 한다.
+         진입은 빠른 ease-out, 이탈은 완만한 곡선으로 키프레임마다 지정한다. */
+      /* 나가는 줄은 투명도를 먼저 떨어뜨리고 더 멀리·더 흐리게 빼서 잔상으로 읽히게 한다.
+         같은 색 문장이 같은 자리에서 겹쳐도 글자가 이중으로 보이지 않는다. */
+      @keyframes stage-1 {
+        0%, 20% { opacity: 1; transform: translate(0, 0); filter: blur(0); animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+        23% { opacity: 0.12; transform: translate(-26px, 0); filter: blur(2.5px); }
+        28% { opacity: 0; transform: translate(-64px, 0); filter: blur(3.5px); }
+        91% { opacity: 0; transform: translate(-64px, 0); filter: blur(3.5px); }
+        92% { opacity: 0; transform: translate(0, 12px); filter: blur(2px); animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+        98%, 100% { opacity: 1; transform: translate(0, 0); filter: blur(0); }
       }
 
-      @keyframes kept {
-        0%, 38% { opacity: 0; transform: translateX(8px); }
-        47%, 87% { opacity: 1; transform: translateX(0); }
-        94%, 100% { opacity: 0; transform: translateX(4px); }
+      @keyframes stage-2 {
+        0%, 21% { opacity: 0; transform: translate(0, 12px); filter: blur(2px); animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+        27%, 54% { opacity: 1; transform: translate(0, 0); filter: blur(0); animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+        57% { opacity: 0.12; transform: translate(-26px, 0); filter: blur(2.5px); }
+        61%, 100% { opacity: 0; transform: translate(-64px, 0); filter: blur(3.5px); }
+      }
+
+      @keyframes stage-3 {
+        0%, 55% { opacity: 0; transform: translate(0, 12px); filter: blur(2px); animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+        61%, 90% { opacity: 1; transform: translate(0, 0); filter: blur(0); animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+        93% { opacity: 0.12; transform: translate(-26px, 0); filter: blur(2.5px); }
+        96%, 100% { opacity: 0; transform: translate(-64px, 0); filter: blur(3.5px); }
+      }
+
+      @keyframes cut-1 {
+        0%, 22.9% { opacity: 1; }
+        23%, 94.9% { opacity: 0; }
+        95%, 100% { opacity: 1; }
+      }
+
+      @keyframes cut-2 {
+        0%, 22.9% { opacity: 0; }
+        23%, 55.9% { opacity: 1; }
+        56%, 100% { opacity: 0; }
+      }
+
+      @keyframes cut-3 {
+        0%, 55.9% { opacity: 0; }
+        56%, 94.9% { opacity: 1; }
+        95%, 100% { opacity: 0; }
+      }
+
+      @keyframes scan-1 {
+        0%, 8% { opacity: 0; transform: translateX(-180px); }
+        12% { opacity: 1; }
+        26% { opacity: 1; transform: translateX(900px); }
+        30%, 100% { opacity: 0; transform: translateX(900px); }
+      }
+
+      @keyframes scan-2 {
+        0%, 46% { opacity: 0; transform: translateX(-180px); }
+        50% { opacity: 1; }
+        59% { opacity: 1; transform: translateX(900px); }
+        63%, 100% { opacity: 0; transform: translateX(900px); }
       }
 
       @media (prefers-reduced-motion: reduce) {
-        .old, .scan { display: none; }
-        .new { opacity: 1; transform: none; animation: none; }
-        .kept { opacity: 1; transform: none; animation: none; }
+        .p1, .p2, .m1, .m2, .scan { display: none; }
+        .p3, .m3 { opacity: 1; transform: none; animation: none; }
       }
     </style>
   </head>
   <body>
-    <main class="canvas" role="img" aria-label="korean-tone이 온톨로지와 품질 게이트 같은 내부 작업 용어를 사용자 말로 바꾸고 client_id 같은 코드 좌표는 그대로 두는 diff 애니메이션">
+    <main class="canvas" role="img" aria-label="korean-tone이 내부 작업 용어가 섞인 원본을 default 말투로 바꾸고, 이어서 mz 말투로 한 번 더 바꾸는 동안 resolveConfig() 같은 코드 좌표는 그대로 두는 애니메이션">
       <section class="editor" aria-hidden="true">
         <div class="editor-bar">
           <div class="traffic"><span></span><span></span><span></span></div>
           <div class="file">assistant-response.ko.md</div>
-          <div class="rule-count">2 fixes · 1 kept</div>
+          <div class="mode">
+            <span class="m1">교정 전</span>
+            <span class="m2">default 모드</span>
+            <span class="m3">mz 모드</span>
+          </div>
         </div>
-        <div class="scan"></div>
+        <div class="scan scan-1"></div>
+        <div class="scan scan-2"></div>
         <div class="diff">
-          <div class="line old">
+          <div class="line c-old p1 row-1">
             <span class="line-no">1</span>
             <span>− [충돌 A] 온톨로지 싱글턴을 수렴 제안에 편입할까요?</span>
             <span class="tag">내부 용어</span>
           </div>
-          <div class="line new row-1">
+          <div class="line c-new p2 row-1">
             <span class="line-no">1</span>
             <span>+ 데이터 구조를 정리할까요?</span>
             <span class="tag">결정만</span>
           </div>
+          <div class="line c-new p3 row-1">
+            <span class="line-no">1</span>
+            <span>+ 데이터 구조 정리할까?</span>
+            <span class="tag">반말</span>
+          </div>
 
-          <div class="line old">
+          <div class="line c-old p1 row-2">
             <span class="line-no">2</span>
             <span>− QA 원안의 OCR 품질 게이트를 testable화할까요?</span>
             <span class="tag">내부 용어</span>
           </div>
-          <div class="line new row-2">
+          <div class="line c-new p2 row-2">
             <span class="line-no">2</span>
             <span>+ AI가 손글씨를 잘 읽는지 언제 확인할까요?</span>
             <span class="tag">독자의 말</span>
           </div>
+          <div class="line c-new p3 row-2">
+            <span class="line-no">2</span>
+            <span>+ AI가 손글씨 잘 읽는지 언제 볼까?</span>
+            <span class="tag">반말</span>
+          </div>
 
-          <div class="line unchanged">
+          <div class="line c-keep p1 row-3">
             <span class="line-no">3</span>
-            <span>&nbsp; <code>client_id</code>가 틀렸어요.</span>
+            <span>&nbsp; <code>resolveConfig()</code>에 대해 책임 분리가 수행되지 않았습니다.</span>
+            <span class="tag kept">좌표 유지</span>
+          </div>
+          <div class="line c-keep p2 row-3">
+            <span class="line-no">3</span>
+            <span>&nbsp; <code>resolveConfig()</code> 하나가 읽기·병합·검증을 다 맡고 있어요.</span>
+            <span class="tag kept">좌표 유지</span>
+          </div>
+          <div class="line c-mz p3 row-3">
+            <span class="line-no">3</span>
+            <span>&nbsp; <code>resolveConfig()</code> 하나가 다 떠맡음 여기 구조 개밤티임;;</span>
             <span class="tag kept">좌표 유지</span>
           </div>
         </div>

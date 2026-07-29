@@ -5,22 +5,15 @@
 [한국어](README.md) | [English](README.en.md)
 
 <p align="center">
-
   <picture>
-
     <source media="(prefers-reduced-motion: reduce)" srcset="assets/korean-tone-hero/korean-tone-static.png">
-
-    <img src="assets/korean-tone-hero/korean-tone.gif" width="960" alt="korean-tone이 딱딱한 번역투는 걷어내고 client_id 같은 코드 좌표는 그대로 두는 모습">
-
+    <img src="assets/korean-tone-hero/korean-tone.gif" width="960" alt="원본이 default 말투로 바뀌고 이어서 mz 말투로 한 번 더 바뀌는 동안 resolveConfig()는 그대로 남는 모습">
   </picture>
-
 </p>
 
 <p align="center">
-
   <strong>Claude Code가 쓰는 한국어를 자연스럽게 다듬습니다.</strong><br>
   설치하면 모든 답변에 적용되고, 린터는 놓친 번역투를 알려줍니다. 코드 식별자는 바꾸지 않습니다.
-
 </p>
 
 <p align="center"><code>/plugin install korean-tone@fromshim</code></p>

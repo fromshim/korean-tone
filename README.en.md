@@ -7,7 +7,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-reduced-motion: reduce)" srcset="assets/korean-tone-hero/korean-tone-static.png">
-    <img src="assets/korean-tone-hero/korean-tone.gif" width="960" alt="korean-tone removes stiff Korean phrasing while preserving client_id and other code identifiers">
+    <img src="assets/korean-tone-hero/korean-tone.gif" width="960" alt="Raw output becomes the default Korean tone, then shifts once more into mz tone, while resolveConfig() stays untouched">
   </picture>
 </p>
 
