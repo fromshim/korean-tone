@@ -193,6 +193,8 @@ def _selftest() -> None:
     assert "어휘 레지스터" in mz_rule and "문단 경계는 그대로 유지" in mz_rule
     assert "네 박자 기준 예시" in mz_rule and "ㄹㅇ개밤티임;;" in mz_rule
     assert "예시의 소재는 가져오지 않는다" in mz_rule
+    assert "수량의 숫자 표기는 그대로 둔다" in mz_rule and "에이전트 셋`으로 바꾸지 않는다" in mz_rule
+    assert "에이전트 셋 돌려서" not in mz_rule, "수량을 한글 수사로 바꾼 예시가 남아 있다"
     assert "한 답변에 두 번까지 쓴다" in mz_rule, "역할이 다른 두 지점의 `ㄹㅇ`을 허용해야 한다"
 
     plugin_root = _plugin_root()
