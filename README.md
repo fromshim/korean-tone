@@ -267,7 +267,7 @@ Claude가 처음부터 그 말투로 문장을 만듭니다.
 규칙을 바꾼 뒤에는 같은 사례로 다시 확인합니다.
 
 - **호출 여부**: [`evals/`](evals)의 질의 10개로, 문서별 스킬이 필요할 때만 호출되는지 봅니다.
-- **교정 품질**: [`evals/quality-cases.jsonl`](evals/quality-cases.jsonl)의 사례 13개를 [`evals/evaluate_quality.py`](evals/evaluate_quality.py)로 채점합니다. 좌표 보존, 번역투 제거, 과교정을 먼저 거릅니다.
+- **교정 품질**: [`evals/quality-cases.jsonl`](evals/quality-cases.jsonl)의 사례 31개를 [`evals/evaluate_quality.py`](evals/evaluate_quality.py)로 채점합니다. 좌표 보존, 번역투 제거, 과교정을 먼저 거릅니다. 교정 전 원본은 [`evals/raw-samples.md`](evals/raw-samples.md)에 모아뒀습니다.
 - **사람 검수**: 자연스러움, 정확성, 말투 일치, 과교정 여부는 사람이 1~5점으로 매깁니다. 같은 스크립트의 `--write-review`로 검수표를 만듭니다.
 
 ```bash
