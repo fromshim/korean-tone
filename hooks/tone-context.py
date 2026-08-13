@@ -48,6 +48,13 @@ REMINDERS = {
     ),
 }
 
+# 서브에이전트에는 규칙 전문 대신 이 두 줄만 넣는다. 서브에이전트는 여럿 뜨니 전문을 넣으면
+# 프롬프트마다 곱해진다. 놓친 번역투는 tone-linter가 파일 저장 시점에 잡는다.
+SUBAGENT_SCOPE = (
+    "파일로 저장하는 한국어 문서(README·문서·주석·커밋 메시지)에 이 말투를 적용한다. "
+    "메인 에이전트에 올리는 보고문은 대상이 아니니 형식은 호출한 쪽 지시를 따른다."
+)
+
 
 def _plugin_root() -> Path:
     configured = os.environ.get("CLAUDE_PLUGIN_ROOT")
@@ -149,6 +156,11 @@ def _prompt_submit(data: dict) -> None:
     _emit_context("UserPromptSubmit", context)
 
 
+def _subagent_start() -> None:
+    # 서브에이전트 산출물은 파일로 남는다. easy·mz는 대화용 모드라 물려주지 않고 default로 고정한다.
+    _emit_context("SubagentStart", REMINDERS["default"] + "\n" + SUBAGENT_SCOPE)
+
+
 def _selftest() -> None:
     assert _detect_mode("KOREAN_TONE_MODE: easy\n설명") == "easy"
     assert _detect_mode("/korean-tone:mz") == "mz"
@@ -163,6 +175,11 @@ def _selftest() -> None:
         assert _read_mode(data, config_root) == "easy"
         _write_mode(data, "mz", config_root)
         assert _read_mode(data, config_root) == "mz"
+
+    subagent_context = REMINDERS["default"] + "\n" + SUBAGENT_SCOPE
+    assert "보고문은 대상이 아니" in subagent_context, "보고문을 제외한다는 범위가 빠지면 압축 스킬과 부딪힌다"
+    assert "코드 좌표는 그대로 둔다" in subagent_context
+    assert len(subagent_context) < 400, "서브에이전트마다 곱해지니 지시문을 짧게 유지한다"
 
     default_rule = _read_rule("default")
     assert len(default_rule) < 9000, "SessionStart 규칙은 10,000자 제한보다 여유 있게 작아야 한다"
@@ -210,6 +227,8 @@ def main() -> None:
             _session_start(data)
         elif action == "prompt-submit":
             _prompt_submit(data)
+        elif action == "subagent-start":
+            _subagent_start()
     except Exception:
         pass
 
