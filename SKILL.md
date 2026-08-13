@@ -11,7 +11,7 @@ license: MIT
 metadata:
   author: seungboshim
   locale: ko
-  version: "3.1.0"
+  version: "3.2.0"
 ---
 
 <!-- tone-lint: off (지양 예문을 담고 있어 자기 검출 제외) -->
