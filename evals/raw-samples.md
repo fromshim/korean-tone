@@ -178,6 +178,14 @@ EventBus를 어떻게 할지 고민했는데요, 결국 Kafka로 가기로 했�
 지켜야 할 것: 영어 그대로
 
 ```text
-The migration runs in two steps. First it adds the new column, then it backfills
-after deploy. Rolling back before the backfill is safe.
+The migration runs in two steps. First it adds the new column, then it backfills after deploy. Rolling back before the backfill is safe.
+```
+
+## 14. 동시성 이슈 보고
+
+겨냥: 1-4 ② 전문용어 — 굳어진 번역어는 옮기고, 없는 번역어는 지어내지 않는다
+지켜야 할 것: `race condition`, `backpressure`, `counter`, `consumer`
+
+```text
+해당 장애는 race condition에 의해 발생되는 것으로 확인되었습니다. 두 스레드가 동시에 counter를 증가시킬 때 값이 유실될 수 있습니다. 또한 두 트랜잭션이 서로의 락을 기다리면서 deadlock이 발생되었습니다. 큐에 backpressure가 적용되지 않아 consumer가 처리하지 못한 메시지가 누적되고 있는 상황입니다.
 ```
