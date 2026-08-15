@@ -1,7 +1,7 @@
 {
   "name": "korean-tone",
   "description": "모든 한국어 답변을 자연스럽게 다듬고 default·easy·mz 말투를 제공한다. 번역투와 내부 작업 용어는 걷어내고, 코드 식별자는 그대로 지킨다.",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "author": {
     "name": "seungboshim",
     "url": "https://github.com/seungboshim"
