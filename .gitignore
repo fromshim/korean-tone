@@ -4,3 +4,8 @@ docs/
 # 파이썬 빌드 산물
 __pycache__/
 *.py[cod]
+
+# 핸드오프 (세션마다 바뀜)
+.claude/handoff.md
+.claude/handoff.tok
+.claude/handoff.md.done
