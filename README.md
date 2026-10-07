@@ -235,9 +235,19 @@ Claude Code에서만 동작합니다. 설치한 뒤 새 세션을 열면 기본 
 없습니다.
 
 ```bash
-/plugin marketplace add fromshim/korean-tone
+/plugin marketplace add fromshim/marketplace
 /plugin install korean-tone@fromshim
 ```
+
+이 저장소만 따로 설치하려면 다음을 씁니다.
+
+```bash
+/plugin marketplace add fromshim/korean-tone
+/plugin install korean-tone@korean-tone
+```
+
+> 예전에 이 저장소를 마켓플레이스 `fromshim`으로 등록했다면 `/plugin marketplace remove fromshim`으로
+> 지운 뒤 `fromshim/marketplace`를 추가하세요. 필요하면 `korean-tone@fromshim`을 다시 설치합니다.
 
 ### skills.sh로 설치
 

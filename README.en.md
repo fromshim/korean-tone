@@ -133,9 +133,20 @@ every Korean reply. The document linter and `default`, `easy`, and `mz` modes ar
 extra setup.
 
 ```bash
-/plugin marketplace add fromshim/korean-tone
+/plugin marketplace add fromshim/marketplace
 /plugin install korean-tone@fromshim
 ```
+
+To install this repo on its own:
+
+```bash
+/plugin marketplace add fromshim/korean-tone
+/plugin install korean-tone@korean-tone
+```
+
+> If you registered this repo earlier as marketplace `fromshim`, run
+> `/plugin marketplace remove fromshim`, then add `fromshim/marketplace`. Reinstall
+> `korean-tone@fromshim` if needed.
 
 ### Via skills.sh
 
