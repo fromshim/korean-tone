@@ -60,9 +60,13 @@ Claude Code의 `PostToolUse` 훅으로 걸려서 한국어 `.md` 파일을 `Writ
 ### 플러그인으로 설치: 모두 자동
 
 ```bash
-/plugin marketplace add fromshim/korean-tone
+/plugin marketplace add fromshim/marketplace
 /plugin install korean-tone@fromshim
 ```
+
+이 저장소만 따로 설치하려면 `/plugin marketplace add fromshim/korean-tone` 다음
+`/plugin install korean-tone@korean-tone`을 쓴다. 예전에 `fromshim`으로 등록했다면
+`/plugin marketplace remove fromshim` 후 `fromshim/marketplace`를 추가한다.
 
 `hooks/hooks.json`이 네 훅을 함께 연결한다. 추가 등록은 필요 없다. 설치하거나 업데이트한 뒤
 새 세션을 시작해야 `SessionStart` 훅이 적용된다.
